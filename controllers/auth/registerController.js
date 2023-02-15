@@ -11,22 +11,24 @@ const registerController = {
             email: Joi.string().email().required(),
             password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}')).required(),
         });
-
+          
         const { error } = registerSchema.validate(req.body);
 
         if(error){
             //return next( error );
             throw error;
         };
-
+        const { email,password } = req.body;
+  console.log(req.body)
         //hash password
 
-        const hashedPassword = await bcrypt.hash(req.body.password,10);
+        const hashedPassword = await bcrypt.hash(password,10);
 
         //prepare the model
+       
 
         const user = new User({
-            email: req.body.email,
+            email,
             password: hashedPassword,
         });
 
@@ -41,9 +43,9 @@ const registerController = {
 
 
         }catch(err){
-            return error;
+            console.log(err);
         }
-        res.json({access_token:access_token})
+        res.json({data:access_token})
 
 
     }

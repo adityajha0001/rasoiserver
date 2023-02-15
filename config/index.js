@@ -6,5 +6,5 @@
  export const {
     APP_PORT,
     DB_URL,
-    JWT_SECRET
+    JWT_SECRET,
 }= process.env;
