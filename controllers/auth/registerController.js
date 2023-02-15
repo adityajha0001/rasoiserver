@@ -1,16 +1,10 @@
 import Joi from 'joi';
-
-
-
-
-
-
-
-
-
+import { User } from '../../models';
+import bcrypt from 'bcrypt';
+import JwtService from '../../services/JwtServices';
 
 const registerController = {
-    register(req,res,next){
+    async register(req,res,next){
 
 
         const registerSchema = Joi.object({
@@ -25,8 +19,31 @@ const registerController = {
             throw error;
         };
 
+        //hash password
 
-        res.json({msg : "hello from express"})
+        const hashedPassword = await bcrypt.hash(req.body.password,10);
+
+        //prepare the model
+
+        const user = new User({
+            email: req.body.email,
+            password: hashedPassword,
+        });
+
+        let access_token;
+
+
+        try{
+            const result = await user.save();
+
+            //token
+            access_token= JwtService.sign({ _id: result._id})
+
+
+        }catch(err){
+            return error;
+        }
+        res.json({access_token:access_token})
 
 
     }
